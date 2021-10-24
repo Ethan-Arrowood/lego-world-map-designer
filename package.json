@@ -1,0 +1,22 @@
+{
+  "name": "lego-world-map-designer",
+  "version": "0.0.1",
+  "description": "An application for designing patterns for the LEGO World Map set",
+  "scripts": {
+    "dev": "browser-sync start --server --files *"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ethan-Arrowood/lego-world-map-designer.git"
+  },
+  "keywords": [],
+  "author": "Ethan Arrowood <ethan@arrowood.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ethan-Arrowood/lego-world-map-designer/issues"
+  },
+  "homepage": "https://github.com/Ethan-Arrowood/lego-world-map-designer#readme",
+  "devDependencies": {
+    "browser-sync": "^2.27.5"
+  }
+}
