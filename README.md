@@ -5,7 +5,7 @@ An application for designing patterns for the [LEGO World Map set](https://www.l
 ## Running locally
 
 1. Clone the repository
-1. Run `npm install` (requires [node.js]())
+1. Run `npm install` (requires [node.js](https://nodejs.org/))
 1. Run `npm run dev` 🚀
 
 ## Contributing
