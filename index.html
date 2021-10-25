@@ -109,28 +109,26 @@
         return [...document.querySelectorAll('input[type=radio]')].find(e => e.checked).value
       }
 
+      function drawStud (x, y, color = getSelectedColor()) {
+        ctx.fillStyle = color
+        ctx.beginPath();
+        ctx.arc(
+          (x * STUD.SIZE) + (STUD.SIZE / 2),
+          (y * STUD.SIZE) + (STUD.SIZE / 2),
+          (STUD.SIZE - 2) / 2,
+          0,
+          2 * Math.PI
+        )
+        ctx.fill()
+      }
+
       canvas.onclick = function ({ clientX, clientY }) {
         const { left, top } = canvas.getBoundingClientRect()
 
         const x = Math.round((clientX - left) / STUD.SIZE)
         const y = Math.round((clientY - top) / STUD.SIZE)
 
-        ctx.fillStyle = getSelectedColor()
-        // ctx.fillRect(
-        //   ((x - 1) * STUD.SIZE) + 1,
-        //   ((y - 1) * STUD.SIZE) + 1,
-        //   STUD.SIZE - 2,
-        //   STUD.SIZE - 2
-        // )
-        ctx.beginPath();
-        ctx.arc(
-          ((x - 1) * STUD.SIZE) + (STUD.SIZE / 2),
-          ((y - 1) * STUD.SIZE) + (STUD.SIZE / 2),
-          (STUD.SIZE - 2) / 2,
-          0,
-          2 * Math.PI
-        )
-        ctx.fill()
+        drawStud(x - 1, y- 1)
       }
 
       function drawItems(items) {
@@ -238,7 +236,32 @@
         }
       }
 
-      
+      fetch('/data.json')
+        .then(resp => resp.json())
+        .then(data => {
+          const worldMapPanels = data.world_map
+
+          for (let panelSetI = 0; panelSetI < worldMapPanels.length; panelSetI++) {
+            const panelSet = worldMapPanels[panelSetI]
+            for (let panelI = 0; panelI < panelSet.length; panelI++) {
+              const panel = panelSet[panelI]
+              for (let rowI = 0; rowI < panel.length; rowI++) {
+                const row = panel[rowI]
+                for (let colI = 0; colI < row.length; colI++) {
+                  const stud = row[colI]
+                  switch (stud) {
+                    case 1:
+                      drawStud(colI + (panelSetI * PANEL.WIDTH), rowI + (panelI * PANEL.HEIGHT), 'white')
+                      break
+                    case 2:
+                      drawStud(colI + (panelSetI * PANEL.WIDTH), rowI + (panelI * PANEL.HEIGHT), 'blue')
+                      break
+                  }
+                }
+              }
+            }
+          }
+        })
     }
   </script>
 </body>
