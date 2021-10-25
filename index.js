@@ -186,7 +186,7 @@ if (canvas.getContext) {
     }
   }
 
-  fetch('/data.json')
+  fetch('data.json')
     .then(resp => resp.json())
     .then(data => {
       const worldMapPanels = data.world_map
