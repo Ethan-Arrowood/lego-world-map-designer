@@ -204,7 +204,7 @@ if (canvas.getContext) {
                   drawStud(colI + (panelSetI * PANEL.WIDTH), rowI + (panelI * PANEL.HEIGHT), 'white')
                   break
                 case 2:
-                  drawStud(colI + (panelSetI * PANEL.WIDTH), rowI + (panelI * PANEL.HEIGHT), 'blue')
+                  drawStud(colI + (panelSetI * PANEL.WIDTH), rowI + (panelI * PANEL.HEIGHT), 'rgb(18, 52, 93)')
                   break
               }
             }

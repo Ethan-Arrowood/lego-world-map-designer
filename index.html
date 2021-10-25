@@ -6,15 +6,63 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LEGO World Map Designing</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺</text></svg>">
   <style type="text/css">
+    :root {
+      --color-0: rgb(255, 255, 255);
+      --color-1: rgb(18, 52, 93);
+      --color-2: rgb(87, 184, 202);
+      --color-3: rgb(74, 165, 158);
+      --color-4: rgb(79, 169, 87);
+      --color-5: rgb(164, 199, 82);
+      --color-6: rgb(216, 191, 142);
+      --color-7: rgb(237, 173, 65);
+      --color-8: rgb(227, 129, 58);
+      --color-9: rgb(224, 117, 116);
+    }
     body {
       margin: 0;
       padding: 0.5rem;
       font-family: sans-serif;
     }
 
-    .controls > div {
-      display: inline-block;
+    .color-selector-container {
+      margin: 0.5rem 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 500px;
+    }
+
+    label[for="color-0"] {
+      color: rgb(0, 0, 0);
+    }
+    label[for="color-1"] {
+      color: var(--color-1);
+    }
+    label[for="color-2"] {
+      color: var(--color-2);
+    }
+    label[for="color-3"] {
+      color: var(--color-3);
+    }
+    label[for="color-4"] {
+      color: var(--color-4);
+    }
+    label[for="color-5"] {
+      color: var(--color-5);
+    }
+    label[for="color-6"] {
+      color: var(--color-6);
+    }
+    label[for="color-7"] {
+      color: var(--color-7);
+    }
+    label[for="color-8"] {
+      color: var(--color-8);
+    }
+    label[for="color-9"] {
+      color: var(--color-9);
     }
 
     canvas {
@@ -27,21 +75,19 @@
 <body>
   <h1>LEGO World Map Designer</h1>
   <div class="controls">
-    <button type="button" id="togglePanels">Toggle Panels</button>
-    <button type="button" id="toggleStuds">Toggle Studs</button>
-    <div>
-      <input type="radio" name="color" id="blue" value="blue">
-      <label for="blue">Blue</label>
-      <input type="radio" name="color" id="red" value="red">
-      <label for="red">Red</label>
-      <input type="radio" name="color" id="yellow" value="yellow">
-      <label for="yellow">Yellow</label>
-      <input type="radio" name="color" id="green" value="green">
-      <label for="green">Green</label>
-      <input type="radio" name="color" id="orange" value="orange">
-      <label for="orange">Orange</label>
-      <input type="radio" name="color" id="purple" value="purple" checked>
-      <label for="purple">Purple</label>
+    <button type="button" id="togglePanels">Toggle Panel Borders</button>
+    <button type="button" id="toggleStuds">Toggle Stud Borders</button>
+    <div class="color-selector-container">
+      <label for="color-0"><input type="radio" name="color" id="color-0" value="rgb(255, 255, 255)">White</label>
+      <label for="color-1"><input type="radio" name="color" id="color-1" value="rgb(18, 52, 93)" checked>Navy Blue</label>
+      <label for="color-2"><input type="radio" name="color" id="color-2" value="rgb(87, 184, 202)">Light Blue</label>
+      <label for="color-3"><input type="radio" name="color" id="color-3" value="rgb(74, 165, 158)">Teal</label>
+      <label for="color-4"><input type="radio" name="color" id="color-4" value="rgb(79, 169, 87)">Green</label>
+      <label for="color-5"><input type="radio" name="color" id="color-5" value="rgb(164, 199, 82)">Light Green</label>
+      <label for="color-6"><input type="radio" name="color" id="color-6" value="rgb(216, 191, 142)">Tan</label>
+      <label for="color-7"><input type="radio" name="color" id="color-7" value="rgb(237, 173, 65)">Light Orange</label>
+      <label for="color-8"><input type="radio" name="color" id="color-8" value="rgb(227, 129, 58)">Orange</label>
+      <label for="color-9"><input type="radio" name="color" id="color-9" value="rgb(224, 117, 116)">Pink</label>
     </div>
   </div>
   <canvas id="canvas" width="1280" height="800"></canvas>
