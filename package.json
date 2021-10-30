@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "An application for designing patterns for the LEGO World Map set",
   "scripts": {
-    "dev": "browser-sync start --server --files *"
+    "dev:tsc": "tsc index.ts -t es6 --moduleResolution node --watch",
+    "dev:bs": "browser-sync start --server --files *"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,11 @@
   "homepage": "https://github.com/Ethan-Arrowood/lego-world-map-designer#readme",
   "devDependencies": {
     "browser-sync": "^2.27.5"
+  },
+  "dependencies": {
+    "bootstrap": "^5.1.3",
+    "safe-get-element": "^1.0.0",
+    "typescript": "^4.4.4",
+    "xstate": "^4.25.0"
   }
 }
