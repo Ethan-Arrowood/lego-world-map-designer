@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "description": "An application for designing patterns for the LEGO World Map set",
   "scripts": {
-    "dev:tsc": "tsc index.ts -t es6 --moduleResolution node --watch",
-    "dev:bs": "browser-sync start --server --files *"
+    "dev": "browser-sync start --server --files *"
   },
   "repository": {
     "type": "git",

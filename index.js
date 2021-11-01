@@ -64,6 +64,19 @@ const studPositions = {
   },
 };
 
+const panelPositions = {
+  /**
+   * @returns {Generator<Pos, void, unknown>}
+   */
+  *[Symbol.iterator]() {
+    for (let y = 0; y < DIMS.H; y+=16) {
+      for (let x = 0; x < DIMS.W; x+=16) {
+        yield [x * DIMS.S, y * DIMS.S];
+      }
+    }
+  }
+}
+
 /**
  * Get the value of the stud based on the COLORS constant
  * @param {Pos} pos
@@ -123,13 +136,13 @@ function mousePosition(canvas, event) {
 }
 
 /**
- *
+ * Draw a circle at the given `pos` with the given `color` translated to rgb
  * @param {Pos} pos
  * @param {Color} color
  * @param {CanvasRenderingContext2D} ctx
  */
 function fillStud([x, y], color, ctx) {
-  ctx.fillStyle = rgb(color);
+  ctx.fillStyle = ctx.strokeStyle = rgb(color);
   ctx.beginPath();
   ctx.arc(
     x * DIMS.S + DIMS.S / 2,
@@ -139,12 +152,26 @@ function fillStud([x, y], color, ctx) {
     2 * Math.PI
   );
   ctx.fill();
+  ctx.stroke();
 }
 
+/**
+ * Given two positions, this returns the start and end x and y positions.
+ * @param {Pos} pos1
+ * @param {Pos} pos2
+ * @returns {[[startX: number, endX: number], [startY: number, endY: number]]}
+ */
 function startEndPos([x1, y1], [x2, y2]) {
   return [x1 < x2 ? [x1, x2] : [x2, x1], y1 < y2 ? [y1, y2] : [y2, y1]];
 }
 
+/**
+ * 
+ * @param {Pos} pos1 
+ * @param {Pos} pos2 
+ * @param {Color} color 
+ * @param {CanvasRenderingContext2D} ctx 
+ */
 function highlightArea(pos1, pos2, color, ctx) {
   const [[sx, ex], [sy, ey]] = startEndPos(pos1, pos2);
   ctx.strokeStyle = rgb(color);
@@ -156,6 +183,13 @@ function highlightArea(pos1, pos2, color, ctx) {
   );
 }
 
+/**
+ * 
+ * @param {Pos} pos1 
+ * @param {Pos} pos2 
+ * @param {Color} color 
+ * @param {CanvasRenderingContext2D} ctx 
+ */
 function fillArea(pos1, pos2, color, ctx) {
   const [[sx, ex], [sy, ey]] = startEndPos(pos1, pos2);
   for (let x = sx; x < ex; x++) {
@@ -165,6 +199,10 @@ function fillArea(pos1, pos2, color, ctx) {
   }
 }
 
+/**
+ * 
+ * @param {CanvasRenderingContext2D} ctx 
+ */
 function drawStudGrid(ctx) {
   ctx.strokeStyle = rgb(COLORS[1]);
   for (const stud of studPositions) {
@@ -172,44 +210,172 @@ function drawStudGrid(ctx) {
   }
 }
 
+/**
+ * @template {keyof HTMLElementEventMap} K
+ * @typedef {(event: HTMLElementEventMap[K]) => void} ControlHandler
+ */
+
+/**
+ * @template {keyof HTMLElementEventMap} K
+ * @typedef {[K, ControlHandler<K>]} ControlHandlerTuple
+ */
+
+/** 
+ * @typedef {(ControlHandlerTuple<'click'>)[]} StudControlHandlers
+ * @typedef {(ControlHandlerTuple<'mousedown'> | ControlHandlerTuple<'mouseup'> | ControlHandlerTuple<'mousemove'>)[]} AreaControlHandlers
+ * @typedef {[]} PaintControlHandlers
+ * 
+ * @typedef {Object} Controls
+ * @property {{ handlers: StudControlHandlers }} stud
+ * @property {{ handlers: AreaControlHandlers, pos1?: Pos, pos2?: Pos }} area
+ * @property {{ handlers: PaintControlHandlers }} paint
+ *
+ * @typedef {Object} Context
+ * @property {string} selectedControl
+ * @property {Color} selectedColor
+ * @property {Color} clearColor
+ * @property {Controls} controls
+ * @property {{ studs: boolean, panels: boolean }} borders
+ */
+
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Context} context 
+ * @param {CanvasRenderingContext2D} ctx 
+ * @returns {ControlHandler<'click'>}
+ */
 function studFillEventHandler(canvas, context, ctx) {
   return event => {
     fillStud(mousePosition(canvas, event), context.selectedColor, ctx)
+    drawBorders(context, ctx)
   };
 }
 
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Context} context 
+ * @returns {ControlHandler<'mousedown'>}
+ */
 function areaControlMouseDownEventHandler (canvas, context) {
   return event => {
-    context.pos1 = context.pos2 = mousePosition(canvas, event)
+    context.controls.area.pos1 = context.controls.area.pos2 = mousePosition(canvas, event)
   }
 }
 
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Context} context 
+ * @param {CanvasRenderingContext2D} ctx 
+ * @returns {ControlHandler<'mousemove'>}
+ */
 function areaControlMouseMoveEventHandler (canvas, context, ctx) {
   return event => {
-    if (context.pos1 !== undefined && context.pos2 !== undefined) {
-      highlightArea(context.pos1, context.pos2, context.clearColor, ctx)
-      context.pos2 = mousePosition(canvas, event)
-      highlightArea(context.pos1, context.pos2, context.selectedColor, ctx)
+    if (context.controls.area.pos1 !== undefined && context.controls.area.pos2 !== undefined) {
+      highlightArea(context.controls.area.pos1, context.controls.area.pos2, context.clearColor, ctx)
+      drawBorders(context, ctx)
+      context.controls.area.pos2 = mousePosition(canvas, event)
+      highlightArea(context.controls.area.pos1, context.controls.area.pos2, context.selectedColor, ctx)
     }
   }
 }
 
+/**
+ * 
+ * @param {Context} context 
+ * @param {CanvasRenderingContext2D} ctx 
+ * @returns {ControlHandler<'mouseup'>}
+ */
 function areaControlMouseUpEventHandler (context, ctx) {
   return () => {
-    if (context.pos1 !== undefined && context.pos2 !== undefined) {
-      highlightArea(context.pos1, context.pos2, context.clearColor, ctx);
-      fillArea(context.pos1, context.pos2, context.selectedColor, ctx)
-      context.pos1 = context.pos2 = undefined
+    if (context.controls.area.pos1 !== undefined && context.controls.area.pos2 !== undefined) {
+      highlightArea(context.controls.area.pos1, context.controls.area.pos2, context.clearColor, ctx);
+      fillArea(context.controls.area.pos1, context.controls.area.pos2, context.selectedColor, ctx)
+      drawBorders(context, ctx)
+      context.controls.area.pos1 = context.controls.area.pos2 = undefined
     }
   }
 }
 
+/**
+ * 
+ * @param {string} name 
+ * @returns 
+ */
 function radioValue (name) {
   return [
     .../** @type {NodeListOf<HTMLInputElement>} */ (
       document.querySelectorAll(`input[name=${name}]`)
     ),
   ].find((e) => e.checked).value
+}
+
+function checkboxValue (name) {
+  return /** @type {HTMLInputElement} */ (document.querySelector(`input[name=${name}]`)).checked
+}
+
+/**
+ * 
+ * @param {HTMLCanvasElement} canvas 
+ * @param {Context} context 
+ * @param {boolean} enable 
+ */
+function enableControl (canvas, context, enable) {
+  for (const [event, handler] of context.controls[context.selectedControl].handlers) {
+    if (enable) {
+      canvas.addEventListener(event, handler)
+    } else {
+      canvas.removeEventListener(event, handler)
+    }
+  }
+}
+
+function drawStudBorders (ctx) {
+  for (const stud of studPositions) {
+    ctx.strokeRect(...stud, DIMS.S, DIMS.S);
+  }
+}
+
+function drawPanelBorders (ctx) {
+  for (const panel of panelPositions) {
+    ctx.strokeRect(...panel, 16 * DIMS.S, 16 * DIMS.S);
+  }
+}
+
+/**
+ * 
+ * @param {Context} context 
+ * @param {CanvasRenderingContext2D} ctx 
+ */
+function drawBorders (context, ctx) {
+  if (context.borders.studs && context.borders.panels) {
+    ctx.strokeStyle = rgb(COLORS[1])
+    drawStudBorders(ctx)
+    drawPanelBorders(ctx)
+  } else if (context.borders.studs && !context.borders.panels) {
+    ctx.strokeStyle = rgb(COLORS[0])
+    drawPanelBorders(ctx)
+    ctx.strokeStyle = rgb(COLORS[1])
+    drawStudBorders(ctx)
+  } else if (!context.borders.studs && context.borders.panels) {
+    ctx.strokeStyle = rgb(COLORS[0])
+    drawStudBorders(ctx)
+    ctx.strokeStyle = rgb(COLORS[1])
+    drawPanelBorders(ctx)
+  } else {
+    ctx.strokeStyle = rgb(COLORS[0])
+    drawStudBorders(ctx)
+    drawPanelBorders(ctx)
+  }
+}
+
+function enableBootstrapTooltips () {
+  const tooltipTriggerList = [...document.querySelectorAll('[data-bs-toggle="tooltip"]')]
+  const tooltips = tooltipTriggerList.map(tooltipTriggerEl => {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
 }
 
 window.onload = function () {
@@ -225,6 +391,10 @@ window.onload = function () {
     document.getElementById("control-select-form")
   )
 
+  const borderToggle = /** @type {HTMLFormElement} */ (
+    document.getElementById('border-toggle-form')
+  )
+
   canvas.width = WIDTH;
   canvas.height = HEIGHT;
 
@@ -236,10 +406,22 @@ window.onload = function () {
 
   // drawStudGrid(ctx);
 
+  /**
+   * @type {Context}
+   */
   const context = {
     selectedControl: 'stud',
     selectedColor: COLORS[radioValue('color-select')],
     clearColor: COLORS[0],
+    controls: {
+      stud: { handlers: [] },
+      area: { handlers: [] },
+      paint: { handlers: [] },
+    },
+    borders: {
+      studs: false,
+      panels: false
+    }
   }
 
   colorSelect.onchange = () => {
@@ -248,47 +430,33 @@ window.onload = function () {
 
   const handleStudControlClick = studFillEventHandler(canvas, context, ctx)
 
+  context.controls.stud.handlers = [['click', handleStudControlClick]]
+
   const handleAreaControlMouseDown = areaControlMouseDownEventHandler(canvas, context)
   const handleAreaControlMouseMove = areaControlMouseMoveEventHandler(canvas, context, ctx)
   const handleAreaControlMouseUp = areaControlMouseUpEventHandler(context, ctx)
 
-  controlSelect.onchange = () => {
-    switch (context.selectedControl) {
-      case 'stud':
-        canvas.removeEventListener('click', handleStudControlClick)
-        break
-      case 'area':
-        canvas.removeEventListener('mousedown', handleAreaControlMouseDown)
-        canvas.removeEventListener('mousemove', handleAreaControlMouseMove)
-        canvas.removeEventListener('mouseup', handleAreaControlMouseUp)
-        break
-      case 'paint':
-        break
-    }
-    context.selectedControl = [
-      .../** @type {NodeListOf<HTMLInputElement>} */ (
-        document.querySelectorAll("input[name=control-select]")
-      ),
-    ].find((e) => e.checked).value;
+  context.controls.area.handlers = [
+    ['mousedown', handleAreaControlMouseDown],
+    ['mousemove', handleAreaControlMouseMove],
+    ['mouseup', handleAreaControlMouseUp],
+  ]
 
-    switch (context.selectedControl) {
-      case 'stud':
-        canvas.addEventListener('click', handleStudControlClick)
-        break
-      case 'area':
-        canvas.addEventListener('mousedown', handleAreaControlMouseDown)
-        canvas.addEventListener('mousemove', handleAreaControlMouseMove)
-        canvas.addEventListener('mouseup', handleAreaControlMouseUp)
-        break
-      case 'paint':
-        break
-    }
+  enableControl(canvas, context, true)
+
+  controlSelect.onchange = () => {
+    enableControl(canvas, context, false)
+    context.selectedControl = radioValue('control-select');
+    enableControl(canvas, context, true)
   };
 
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  console.log(tooltipTriggerList)
-  console.log(bootstrap)
-  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+  borderToggle.onchange = () => {
+    context.borders = {
+      studs: checkboxValue('stud-border-toggle'),
+      panels: checkboxValue('panel-border-toggle'),
+    }
+    drawBorders(context, ctx)
+  }
+
+  enableBootstrapTooltips()
 };

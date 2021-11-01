@@ -25,6 +25,12 @@
       --color-10: rgb(224, 117, 116);
     }
 
+    label[for="color-0"] {
+      color: var(--color-0) !important;
+    }
+    .btn-check:hover+label[for="color-0"], .btn-check:checked+label[for="color-0"] {
+      color: var(--color-1) !important;
+    }
     label[for="color-1"]::before {
       height: 1rem;
       width: 1rem;
@@ -35,15 +41,9 @@
       background-repeat: no-repeat;
       background-size: 1rem 1rem;
     }
-    .btn-check:checked+label[for="color-1"]::before, .btn-check:hover+label[for="color-1"]::before {
-      height: 1rem;
-      width: 1rem;
-      display: inline-block;
-      content: "";
-      vertical-align: -.125em;
+    .btn-check:checked+label[for="color-1"]::before,
+    .btn-check:hover+label[for="color-1"]::before {
       background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="rgb(255, 255, 255)" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8"/></svg>');
-      background-repeat: no-repeat;
-      background-size: 1rem 1rem;
     }
     label[for="color-2"], label[for="color-2"]:checked {
       color: var(--color-2) !important;
@@ -90,31 +90,7 @@
 <body>
   <h1>LEGO World Map Designer</h1>
   <div class="btn-toolbar m-2" role="toolbar" aria-label="Toolbar">
-    <form class="btn-group me-2" role="group" aria-label="Color Selector" id="color-select-form">
-      <input class="btn-check" type="radio" name="color-select" id="color-0" autocomplete="off" value="0">
-      <label class="btn btn-outline-dark" for="color-0"><i class="bi bi-eraser-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-1" autocomplete="off" value="1">
-      <label class="btn btn-outline-dark" for="color-1"><i class="bi" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-2" autocomplete="off" value="2" checked>
-      <label class="btn btn-outline-dark" for="color-2"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-3" autocomplete="off" value="3">
-      <label class="btn btn-outline-dark" for="color-3"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-4" autocomplete="off" value="4">
-      <label class="btn btn-outline-dark" for="color-4"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-5" autocomplete="off" value="5">
-      <label class="btn btn-outline-dark" for="color-5"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-6" autocomplete="off" value="6">
-      <label class="btn btn-outline-dark" for="color-6"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-7" autocomplete="off" value="7">
-      <label class="btn btn-outline-dark" for="color-7"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-8" autocomplete="off" value="8">
-      <label class="btn btn-outline-dark" for="color-8"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-9" autocomplete="off" value="9">
-      <label class="btn btn-outline-dark" for="color-9"><i class="bi bi-circle-fill" aria-label=""></i></label>
-      <input class="btn-check" type="radio" name="color-select" id="color-10" autocomplete="off" value="10">
-      <label class="btn btn-outline-dark" for="color-10"><i class="bi bi-circle-fill" aria-label=""></i></label>
-    </form>
-    <form class="btn-group" role="group" aria-label="Control Selector" id="control-select-form">
+    <form class="btn-group me-2" role="group" aria-label="Control Selector" id="control-select-form">
       <input type="radio" class="btn-check" name="control-select" id="studfill" autocomplete="off" value="stud" checked>
       <label class="btn btn-outline-primary" for="studfill">Stud Fill</label>
     
@@ -127,6 +103,36 @@
           Paint
         </label>
       </span>
+    </form>
+    <form class="btn-group me-2" role="group" aria-label="Color Selector" id="color-select-form">
+      <input class="btn-check" type="radio" name="color-select" id="color-0" autocomplete="off" value="0">
+      <label class="btn btn-outline-secondary" for="color-0"><i class="bi bi-eraser-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-1" autocomplete="off" value="1">
+      <label class="btn btn-outline-secondary" for="color-1"><i class="bi" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-2" autocomplete="off" value="2" checked>
+      <label class="btn btn-outline-secondary" for="color-2"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-3" autocomplete="off" value="3">
+      <label class="btn btn-outline-secondary" for="color-3"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-4" autocomplete="off" value="4">
+      <label class="btn btn-outline-secondary" for="color-4"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-5" autocomplete="off" value="5">
+      <label class="btn btn-outline-secondary" for="color-5"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-6" autocomplete="off" value="6">
+      <label class="btn btn-outline-secondary" for="color-6"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-7" autocomplete="off" value="7">
+      <label class="btn btn-outline-secondary" for="color-7"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-8" autocomplete="off" value="8">
+      <label class="btn btn-outline-secondary" for="color-8"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-9" autocomplete="off" value="9">
+      <label class="btn btn-outline-secondary" for="color-9"><i class="bi bi-circle-fill" aria-label=""></i></label>
+      <input class="btn-check" type="radio" name="color-select" id="color-10" autocomplete="off" value="10">
+      <label class="btn btn-outline-secondary" for="color-10"><i class="bi bi-circle-fill" aria-label=""></i></label>
+    </form>
+    <form class="btn-group me-2" role="group" aria-lable="Border actions" id="border-toggle-form">
+      <input class="btn-check" type="checkbox" name="stud-border-toggle" id="stud-border-toggle" autocomplete="off">
+      <label for="stud-border-toggle" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle Stud Borders"><i class="bi bi-border-all" aria-label=""></i></label>
+      <input class="btn-check" type="checkbox" name="panel-border-toggle" id="panel-border-toggle" autocomplete="off">
+      <label for="panel-border-toggle" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle Panel Borders"><i class="bi bi-border-outer" aria-label=""></i></label>
     </form>
   </div>
   <!-- <div class="container controls">
